@@ -7,6 +7,25 @@
     body { margin: 0; background: #111; color: white; font-family: sans-serif; text-align: center; }
     canvas { background: #000; display: block; margin: auto; }
     #info { margin-top: 10px; }
+    #controls {
+      position: fixed;
+      top: 120px;
+      right: 20px;
+      width: 220px;
+      padding: 15px;
+      background: rgba(0, 0, 0, 0.7);
+      border: 2px solid #fff;
+      border-radius: 10px;
+      text-align: left;
+      font-size: 14px;
+    }
+    #controls h3 {
+      margin-top: 0;
+      text-align: center;
+    }
+    #controls ul {
+      padding-left: 18px;
+    }
   </style>
 </head>
 <body>
@@ -14,6 +33,16 @@
   <h2>Touches en 20 pour gagner, mais ne te fais pas toucher !</h2>
   <canvas id="game" width="600" height="600"></canvas>
   <div id="info">Score : <span id="score">0</span></div>
+
+  <div id="controls">
+    <h3>🎮 Contrôles</h3>
+    <ul>
+      <li>⬅️ / ➡️ : Tourner le canard</li>
+      <li>⬆️ : Avancer</li>
+      <li>Espace : Tirer un magret 🥩</li>
+      <li>R : Recommencer</li>
+    </ul>
+  </div>
 
   <script>
     const canvas = document.getElementById("game");
@@ -61,9 +90,9 @@
       return {
         x,
         y,
-        vx: Math.cos(angle) * (1.2 + speedMultiplier),
-        vy: Math.sin(angle) * (1.2 + speedMultiplier),
-        size: 32
+        vx: Math.cos(angle) * (1 + speedMultiplier),
+        vy: Math.sin(angle) * (1 + speedMultiplier),
+        size: 40
       };
     }
 
@@ -80,21 +109,22 @@
     window.addEventListener("keyup", e => keys[e.key] = false);
 
     window.addEventListener("keydown", e => {
-  if (e.key === " " && !gameOver) {
-    magrets.push({
-      x: duck.x,
-      y: duck.y,
-      vx: Math.cos(duck.angle) * 6,
-      vy: Math.sin(duck.angle) * 6,
-      life: 60
+      if (e.key === " " && !gameOver) {
+        magrets.push({
+          x: duck.x,
+          y: duck.y,
+          vx: Math.cos(duck.angle) * 6,
+          vy: Math.sin(duck.angle) * 6,
+          life: 60
+        });
+      }
+
+      if ((e.key === "r" || e.key === "R") && canRestart) {
+        restartGame();
+      }
     });
-  }
-
-  if ((e.key === "r" || e.key === "R") && canRestart) {
-    restartGame();
-  }
-});
-
+      }
+    });
 
     function update() {
       if (gameOver) return;
@@ -136,8 +166,8 @@
             if (score === 10) {
               gameOver = true;
               canRestart = true;
-              alert("Victoire ! Le canard est rassasié 🦆🥩\n" +
-                      "Appuie sur R pour recommencer");
+              alert("Victoire ! Le canard est rassasié 🦆🥩
+Appuie sur R pour recommencer");
             }
             break;
           }
@@ -150,7 +180,7 @@
           gameOver = true;
           canRestart = true;
           alert("Game Over 💥\n" +
-"Le canard a été touché !\n" + 
+"Le canard a été touché !\n" +
 "Appuie sur R pour recommencer");
           return;
         }
@@ -181,25 +211,20 @@
     }
 
     function restartGame() {
-  score = 0;
-  speedMultiplier = 1;
-  gameOver = false;
-  canRestart = false;
-  scoreEl.textContent = score;
+      score = 0;
+      speedMultiplier = 1;
+      gameOver = false;
+      canRestart = false;
+      scoreEl.textContent = score;
 
-  duck.x = WIDTH / 2;
-  duck.y = HEIGHT / 2;
-  duck.angle = 0;
+      duck.x = WIDTH / 2;
+      duck.y = HEIGHT / 2;
+      duck.angle = 0;
 
-  magrets = [];
-  asteroids = [];
-  ensureAsteroids();
-
-  for (const key in keys) {
-    keys[key] = false;
-  }
-}
-
+      magrets = [];
+      asteroids = [];
+      ensureAsteroids();
+    }
 
     function loop() {
       update();
