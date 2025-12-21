@@ -105,26 +105,22 @@
     ensureAsteroids();
 
     const keys = {};
-    window.addEventListener("keydown", e => keys[e.key] = true);
-    window.addEventListener("keyup", e => keys[e.key] = false);
-
     window.addEventListener("keydown", e => {
-      if (e.key === " " && !gameOver) {
-        magrets.push({
-          x: duck.x,
-          y: duck.y,
-          vx: Math.cos(duck.angle) * 6,
-          vy: Math.sin(duck.angle) * 6,
-          life: 60
-        });
-      }
+  if (e.key === " " && !gameOver) {
+    magrets.push({
+      x: duck.x,
+      y: duck.y,
+      vx: Math.cos(duck.angle) * 6,
+      vy: Math.sin(duck.angle) * 6,
+      life: 60
+    });
+  }
 
-      if ((e.key === "r" || e.key === "R") && canRestart) {
-        restartGame();
-      }
-    });
-      }
-    });
+  if ((e.key === "r" || e.key === "R") && canRestart) {
+    restartGame();
+  }
+});
+
 
     function update() {
       if (gameOver) return;
@@ -211,20 +207,26 @@ Appuie sur R pour recommencer");
     }
 
     function restartGame() {
-      score = 0;
-      speedMultiplier = 1;
-      gameOver = false;
-      canRestart = false;
-      scoreEl.textContent = score;
+  score = 0;
+  speedMultiplier = 1;
+  gameOver = false;
+  canRestart = false;
+  scoreEl.textContent = score;
 
-      duck.x = WIDTH / 2;
-      duck.y = HEIGHT / 2;
-      duck.angle = 0;
+  duck.x = WIDTH / 2;
+  duck.y = HEIGHT / 2;
+  duck.angle = 0;
 
-      magrets = [];
-      asteroids = [];
-      ensureAsteroids();
-    }
+  magrets = [];
+  asteroids = [];
+  ensureAsteroids();
+
+  // ✅ RESET DES TOUCHES (FIX DU BUG)
+  for (const key in keys) {
+    keys[key] = false;
+  }
+}
+
 
     function loop() {
       update();
