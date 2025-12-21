@@ -62,7 +62,7 @@
         y,
         vx: Math.cos(angle) * (1.2 + speedMultiplier),
         vy: Math.sin(angle) * (1.2 + speedMultiplier),
-        size: 50
+        size: 45
       };
     }
 
@@ -152,7 +152,7 @@
 
       // Magrets
       magrets.forEach(m => {
-        ctx.drawImage(magretImg, m.x - 8, m.y - 8, 16, 16);
+        ctx.drawImage(magretImg, m.x - 12, m.y - 12, 24, 24);
       });
 
       // Astéroïdes
