@@ -26,11 +26,21 @@
     let gameOver = false;
     let speedMultiplier = 1;
 
+    /* === SPRITES === */
+    const duckImg = new Image();
+    duckImg.src = "canard.png";   // à placer dans le repo
+
+    const asteroidImg = new Image();
+    asteroidImg.src = "chasseur.png";
+
+    const magretImg = new Image();
+    magretImg.src = "cuisse.png";
+
     const duck = {
       x: WIDTH / 2,
       y: HEIGHT / 2,
       angle: 0,
-      size: 15,
+      size: 32,
       speed: 3
     };
 
@@ -49,20 +59,26 @@
       return {
         x,
         y,
-        vx: Math.cos(angle) * speedMultiplier,
-        vy: Math.sin(angle) * speedMultiplier,
-        size: 20
+        vx: Math.cos(angle) * (1.2 + speedMultiplier),
+        vy: Math.sin(angle) * (1.2 + speedMultiplier),
+        size: 32
       };
     }
 
-    for (let i = 0; i < 5; i++) asteroids.push(createAsteroid());
+    function ensureAsteroids() {
+      while (asteroids.length < 5) {
+        asteroids.push(createAsteroid());
+      }
+    }
+
+    ensureAsteroids();
 
     const keys = {};
     window.addEventListener("keydown", e => keys[e.key] = true);
     window.addEventListener("keyup", e => keys[e.key] = false);
 
     window.addEventListener("keydown", e => {
-      if (e.key === " ") {
+      if (e.key === " " && !gameOver) {
         magrets.push({
           x: duck.x,
           y: duck.y,
@@ -94,58 +110,53 @@
       magrets = magrets.filter(m => m.life > 0);
 
       asteroids.forEach(a => {
-        a.x += a.vx;
-        a.y += a.vy;
+        a.x = (a.x + a.vx + WIDTH) % WIDTH;
+        a.y = (a.y + a.vy + HEIGHT) % HEIGHT;
       });
 
-      asteroids.forEach((a, ai) => {
-        magrets.forEach((m, mi) => {
+      for (let ai = asteroids.length - 1; ai >= 0; ai--) {
+        for (let mi = magrets.length - 1; mi >= 0; mi--) {
+          const a = asteroids[ai];
+          const m = magrets[mi];
           const dx = a.x - m.x;
           const dy = a.y - m.y;
-          if (Math.hypot(dx, dy) < a.size) {
+          if (Math.hypot(dx, dy) < a.size / 2) {
             asteroids.splice(ai, 1);
             magrets.splice(mi, 1);
             score++;
             scoreEl.textContent = score;
-            asteroids.push(createAsteroid());
 
             if (score === 5) speedMultiplier = 2;
             if (score === 10) {
               gameOver = true;
               alert("Victoire ! Le canard est rassasié 🦆🥩");
             }
+            break;
           }
-        });
-      });
-    }
+        }
+      }
 
-    function drawDuck() {
-      ctx.save();
-      ctx.translate(duck.x, duck.y);
-      ctx.rotate(duck.angle);
-      ctx.fillStyle = "yellow";
-      ctx.beginPath();
-      ctx.moveTo(20, 0);
-      ctx.lineTo(-10, -10);
-      ctx.lineTo(-10, 10);
-      ctx.closePath();
-      ctx.fill();
-      ctx.restore();
+      ensureAsteroids();
     }
 
     function draw() {
       ctx.clearRect(0, 0, WIDTH, HEIGHT);
 
-      drawDuck();
+      // Canard
+      ctx.save();
+      ctx.translate(duck.x, duck.y);
+      ctx.rotate(duck.angle);
+      ctx.drawImage(duckImg, -duck.size / 2, -duck.size / 2, duck.size, duck.size);
+      ctx.restore();
 
-      ctx.fillStyle = "brown";
-      magrets.forEach(m => ctx.fillRect(m.x, m.y, 4, 4));
+      // Magrets
+      magrets.forEach(m => {
+        ctx.drawImage(magretImg, m.x - 8, m.y - 8, 16, 16);
+      });
 
-      ctx.strokeStyle = "gray";
+      // Astéroïdes
       asteroids.forEach(a => {
-        ctx.beginPath();
-        ctx.arc(a.x, a.y, a.size, 0, Math.PI * 2);
-        ctx.stroke();
+        ctx.drawImage(asteroidImg, a.x - a.size / 2, a.y - a.size / 2, a.size, a.size);
       });
     }
 
