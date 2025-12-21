@@ -40,7 +40,7 @@
       x: WIDTH / 2,
       y: HEIGHT / 2,
       angle: 0,
-      size: 32,
+      size: 42,
       speed: 3
     };
 
@@ -61,12 +61,12 @@
         y,
         vx: Math.cos(angle) * (1.2 + speedMultiplier),
         vy: Math.sin(angle) * (1.2 + speedMultiplier),
-        size: 32
+        size: 42
       };
     }
 
     function ensureAsteroids() {
-      while (asteroids.length < 5) {
+      while (asteroids.length < 3) {
         asteroids.push(createAsteroid());
       }
     }
