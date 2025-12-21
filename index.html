@@ -80,22 +80,21 @@
     window.addEventListener("keyup", e => keys[e.key] = false);
 
     window.addEventListener("keydown", e => {
-      if (e.key === " " && !gameOver) {
-        magrets.push({
-          x: duck.x,
-          y: duck.y,
-          vx: Math.cos(duck.angle) * 6,
-          vy: Math.sin(duck.angle) * 6,
-          life: 60
-        });
-      }
+  if (e.key === " " && !gameOver) {
+    magrets.push({
+      x: duck.x,
+      y: duck.y,
+      vx: Math.cos(duck.angle) * 6,
+      vy: Math.sin(duck.angle) * 6,
+      life: 60
+    });
+  }
 
-      if ((e.key === "r" || e.key === "R") && canRestart) {
-        restartGame();
-      }
-    });
-      }
-    });
+  if ((e.key === "r" || e.key === "R") && canRestart) {
+    restartGame();
+  }
+});
+
 
     function update() {
       if (gameOver) return;
@@ -137,8 +136,8 @@
             if (score === 10) {
               gameOver = true;
               canRestart = true;
-              alert("Victoire ! Le canard est rassasié 🦆🥩\
-                      Appuie sur R pour recommencer");
+              alert("Victoire ! Le canard est rassasié 🦆🥩\n" +
+                      "Appuie sur R pour recommencer");
             }
             break;
           }
@@ -150,9 +149,9 @@
         if (Math.hypot(a.x - duck.x, a.y - duck.y) < (a.size + duck.size) / 2) {
           gameOver = true;
           canRestart = true;
-          alert("Game Over 💥\
-Le canard a été touché !\
-Appuie sur R pour recommencer");
+          alert("Game Over 💥\n" +
+"Le canard a été touché !\n" + 
+"Appuie sur R pour recommencer");
           return;
         }
       }
