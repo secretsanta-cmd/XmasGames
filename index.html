@@ -10,8 +10,8 @@
   </style>
 </head>
 <body>
-  <h1>Gare aux chasseurs 🦆</h1>
-  <h2>A 10 touchés, tout s'accélère, à 20, c'est gagné !</h2>
+  <h1>Gare aux chasseurs ! 🦆</h1>
+  <h2>Touches en 20 pour gagner, mais ne te fais pas toucher !</h2>
   <canvas id="game" width="600" height="600"></canvas>
   <div id="info">Score : <span id="score">0</span></div>
 
@@ -26,6 +26,7 @@
     let score = 0;
     let gameOver = false;
     let speedMultiplier = 1;
+    let canRestart = false;
 
     /* === SPRITES === */
     const duckImg = new Image();
@@ -41,7 +42,7 @@
       x: WIDTH / 2,
       y: HEIGHT / 2,
       angle: 0,
-      size: 55,
+      size: 50,
       speed: 3
     };
 
@@ -62,7 +63,7 @@
         y,
         vx: Math.cos(angle) * (1.2 + speedMultiplier),
         vy: Math.sin(angle) * (1.2 + speedMultiplier),
-        size: 45
+        size: 32
       };
     }
 
@@ -87,6 +88,12 @@
           vy: Math.sin(duck.angle) * 6,
           life: 60
         });
+      }
+
+      if ((e.key === "r" || e.key === "R") && canRestart) {
+        restartGame();
+      }
+    });
       }
     });
 
@@ -115,25 +122,38 @@
         a.y = (a.y + a.vy + HEIGHT) % HEIGHT;
       });
 
+      // Collision magret / astéroïde
       for (let ai = asteroids.length - 1; ai >= 0; ai--) {
         for (let mi = magrets.length - 1; mi >= 0; mi--) {
           const a = asteroids[ai];
           const m = magrets[mi];
-          const dx = a.x - m.x;
-          const dy = a.y - m.y;
-          if (Math.hypot(dx, dy) < a.size / 2) {
+          if (Math.hypot(a.x - m.x, a.y - m.y) < a.size / 2) {
             asteroids.splice(ai, 1);
             magrets.splice(mi, 1);
             score++;
             scoreEl.textContent = score;
 
-            if (score === 10) speedMultiplier = 2;
-            if (score === 20) {
+            if (score === 5) speedMultiplier = 2;
+            if (score === 10) {
               gameOver = true;
-              alert("Victoire ! Le canard est rassasié 🦆🥩");
+              canRestart = true;
+              alert("Victoire ! Le canard est rassasié 🦆🥩\
+                      Appuie sur R pour recommencer");
             }
             break;
           }
+        }
+      }
+
+      // Collision canard / astéroïde → GAME OVER
+      for (const a of asteroids) {
+        if (Math.hypot(a.x - duck.x, a.y - duck.y) < (a.size + duck.size) / 2) {
+          gameOver = true;
+          canRestart = true;
+          alert("Game Over 💥\
+Le canard a été touché !\
+Appuie sur R pour recommencer");
+          return;
         }
       }
 
@@ -159,6 +179,22 @@
       asteroids.forEach(a => {
         ctx.drawImage(asteroidImg, a.x - a.size / 2, a.y - a.size / 2, a.size, a.size);
       });
+    }
+
+    function restartGame() {
+      score = 0;
+      speedMultiplier = 1;
+      gameOver = false;
+      canRestart = false;
+      scoreEl.textContent = score;
+
+      duck.x = WIDTH / 2;
+      duck.y = HEIGHT / 2;
+      duck.angle = 0;
+
+      magrets = [];
+      asteroids = [];
+      ensureAsteroids();
     }
 
     function loop() {
