@@ -208,12 +208,10 @@ window.addEventListener("keyup", e => {
             score++;
             scoreEl.textContent = score;
 
-            if (score === 8) speedMultiplier = 2;
-            if (score === 15) {
+            if (score === 1) speedMultiplier = 2;
+            if (score === 2) {
               gameOver = true;
               canRestart = true;
-              alert("Victoire ! Le canard est sauf ! 🦆🥩\n" +
-"Clique ici pour la suite de ton aventure : ");
               victoryScreen.style.display = "flex";
             }
             break;
