@@ -28,6 +28,44 @@
     }
   </style>
 </head>
+  
+<div id="victoryScreen" style="
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.85);
+  color:white;
+  z-index:10;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  font-size:20px;
+">
+  <div style="
+    border:3px solid white;
+    padding:30px;
+    border-radius:15px;
+    background:#111;
+    max-width:400px;
+  ">
+    <h2>🎉 Victoire !</h2>
+    <p>Le canard est sauf 🦆🥩</p>
+
+    <p>
+      👉 <a href="https://example.com"
+           target="_blank"
+           style="color:#4dd0ff;font-weight:bold;">
+        Continuer l’aventure
+      </a>
+    </p>
+
+    <p style="margin-top:20px;">
+      Appuie sur <strong>R</strong> pour recommencer
+    </p>
+  </div>
+</div>
+
+
 <body>
   <h1>Gare aux chasseurs ! 🦆</h1>
   <h2>Touches en 20 pour gagner, mais ne te fais pas toucher !</h2>
@@ -170,12 +208,13 @@ window.addEventListener("keyup", e => {
             score++;
             scoreEl.textContent = score;
 
-            if (score === 5) speedMultiplier = 2;
-            if (score === 10) {
+            if (score === 8) speedMultiplier = 2;
+            if (score === 15) {
               gameOver = true;
               canRestart = true;
-              alert("Victoire ! Le canard est rassasié 🦆🥩\n" +
-"Appuie sur R pour recommencer");
+              alert("Victoire ! Le canard est sauf ! 🦆🥩\n" +
+"Clique ici pour la suite de ton aventure : ");
+              victoryScreen.style.display = "flex";
             }
             break;
           }
@@ -237,6 +276,8 @@ window.addEventListener("keyup", e => {
   for (const key in keys) {
     keys[key] = false;
   }
+  victoryScreen.style.display = "none";
+
 }
 
 
@@ -247,6 +288,8 @@ window.addEventListener("keyup", e => {
     }
 
     loop();
+ const victoryScreen = document.getElementById("victoryScreen");
+
   </script>
 </body>
 </html>
