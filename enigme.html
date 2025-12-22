@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Énigme 🧩</title>
+  <style>
+    body {
+      background: #000;
+      color: white;
+      font-family: sans-serif;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .box {
+      background: rgba(0,0,0,0.7);
+      border: 3px solid white;
+      border-radius: 15px;
+      padding: 30px;
+      max-width: 500px;
+    }
+
+    input {
+      padding: 10px;
+      font-size: 16px;
+      margin-top: 15px;
+      width: 80%;
+      text-align: center;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .success {
+      color: #4dd0ff;
+      margin-top: 20px;
+      font-weight: bold;
+      display: none;
+    }
+
+    .error {
+      color: #ff6b6b;
+      margin-top: 20px;
+      display: none;
+    }
+
+    a {
+      color: #4dd0ff;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="box">
+    <h1>🧩 Énigme</h1>
+    <p>
+      Je vole sans ailes,<br>
+      je tire sans arme,<br>
+      je suis délicieux mais dangereux.<br><br>
+      Qui suis-je ?
+    </p>
+
+    <input id="answer" placeholder="Ta réponse…" />
+    <br>
+    <button onclick="checkAnswer()">Valider</button>
+
+    <div class="error" id="error">
+      ❌ Mauvaise réponse…
+    </div>
+
+    <div class="success" id="success">
+      ✅ Bonne réponse !<br><br>
+      <a href="final.html">➡ Accéder au jeu final</a>
+    </div>
+  </div>
+
+  <script>
+    function checkAnswer() {
+      const value = document.getElementById("answer").value
+        .trim()
+        .toLowerCase();
+
+      const goodAnswers = ["canard", "le canard"];
+
+      if (goodAnswers.includes(value)) {
+        document.getElementById("success").style.display = "block";
+        document.getElementById("error").style.display = "none";
+      } else {
+        document.getElementById("error").style.display = "block";
+        document.getElementById("success").style.display = "none";
+      }
+    }
+  </script>
+
+</body>
+</html>
