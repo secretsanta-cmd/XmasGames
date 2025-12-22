@@ -106,6 +106,11 @@
 
     const keys = {};
     window.addEventListener("keydown", e => {
+  if (["ArrowLeft", "ArrowRight", "ArrowUp", " "].includes(e.key)) {
+    e.preventDefault(); // ⛔ empêche le scroll navigateur
+  }
+  keys[e.key] = true;
+
   if (e.key === " " && !gameOver) {
     magrets.push({
       x: duck.x,
@@ -119,6 +124,13 @@
   if ((e.key === "r" || e.key === "R") && canRestart) {
     restartGame();
   }
+});
+
+window.addEventListener("keyup", e => {
+  if (["ArrowLeft", "ArrowRight", "ArrowUp", " "].includes(e.key)) {
+    e.preventDefault();
+  }
+  keys[e.key] = false;
 });
 
 
