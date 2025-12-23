@@ -40,7 +40,7 @@ let cameraY = 0;
 // === JOUEUR ===
 const player = {
   x: 50,
-  y: 350,
+  y: platforms[0].y - 32,
   w: 24,
   h: 32,
   vx: 0,
@@ -120,9 +120,9 @@ function update() {
     player.vy = player.speed;
   }
 
-  if (!player.onLadder) {
-    player.vy += gravity;
-  }
+  if (!player.onGround && !player.onLadder) {
+  player.vy += gravity;
+}
 
   player.x += player.vx;
   player.y += player.vy;
@@ -132,18 +132,19 @@ function update() {
   // === COLLISIONS PLATEFORMES ===
   player.onGround = false;
   platforms.forEach(p => {
-    if (
-      player.x + player.w > p.x &&
-      player.x < p.x + p.w &&
-      player.y + player.h >= p.y &&
-      player.y + player.h <= p.y + 10 &&
-      player.vy >= 0
-    ) {
-      player.y = p.y - player.h;
-      player.vy = 0;
-      player.onGround = true;
-    }
-  });
+  if (
+    player.x + player.w > p.x &&
+    player.x < p.x + p.w &&
+    player.y + player.h >= p.y &&
+    player.y + player.h <= p.y + player.vy + p.h &&
+    player.vy >= 0
+  ) {
+    player.y = p.y - player.h;
+    player.vy = 0;
+    player.onGround = true;
+  }
+});
+
 
   // === ÉCHELLES ===
   player.onLadder = false;
