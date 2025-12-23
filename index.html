@@ -1,1 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Accès restreint 🦆</title>
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      color: white;
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      text-align: center;
+    }
 
+    .box {
+      border: 3px solid white;
+      border-radius: 15px;
+      padding: 40px;
+      max-width: 400px;
+      background: rgba(0,0,0,0.7);
+    }
+
+    input {
+      margin-top: 20px;
+      padding: 10px;
+      width: 80%;
+      font-size: 16px;
+      text-align: center;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 12px 25px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+      border-radius: 10px;
+      background: #4dd0ff;
+      color: black;
+    }
+
+    button:hover {
+      background: #7de3ff;
+    }
+
+    .error {
+      color: #ff6b6b;
+      margin-top: 15px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="box">
+    <h1>Salut ma baddie,</h1>
+
+    <p>
+      Voici un petit cadeau de Christmas sans prétention aucune.<br>
+      Il n'en demeure que c'est ton cadeau à toi.
+    </p>
+
+    <p>Le mot de passe pour y accéder est le nom du philosophe que j'ai
+    idiotement cité quand tu as dit te positionner au milieu du quai
+    le soir où on s'est rencontré pour la toute première fois.
+    </p>
+
+    <p>Bonne chance, joyeux No&euml; et j'ai h&acirc;te de te voir.</p>
+
+    <input
+      type="password"
+      id="password"
+      placeholder="Mot de passe"
+      onkeydown="if(event.key === 'Enter') checkPassword()"
+    />
+
+    <br>
+
+    <button onclick="checkPassword()">Entrer</button>
+
+    <div class="error" id="error">
+      ❌ Pas le bon, ou pas la bonne orthographe. 
+    </div>
+  </div>
+
+  <script>
+    const PASSWORD = "aristote"; // 🔐 change-le ici
+
+    function checkPassword() {
+      const value = document.getElementById("password").value.trim().toLowerCase();
+
+      if (value === PASSWORD) {
+        // optionnel : mémoriser l'accès
+        localStorage.setItem("duckAccess", "true");
+
+        // redirection vers la vraie intro ou le jeu
+        window.location.href = "intro.html";
+      } else {
+        document.getElementById("error").style.display = "block";
+      }
+    }
+
+    // 🔁 accès automatique si déjà validé
+    if (localStorage.getItem("duckAccess") === "true") {
+      window.location.href = "intro.html";
+    }
+  </script>
+
+</body>
+</html>
