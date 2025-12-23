@@ -17,6 +17,25 @@
     display: block;
     margin: auto;
   }
+  #controls {
+  position: fixed;
+  right: 20px;
+  top: 120px;
+  width: 220px;
+  padding: 15px;
+  background: rgba(0,0,0,0.7);
+  border: 2px solid white;
+  border-radius: 10px;
+  text-align: left;
+  font-size: 14px;
+  color: white;
+}
+
+#controls h3 {
+  margin-top: 0;
+  text-align: center;
+}
+
 </style>
 </head>
 
@@ -27,6 +46,15 @@
 
 <canvas id="game" width="600" height="400"></canvas>
 
+  <div id="controls">
+  <h3>🎮 Contrôles</h3>
+  <ul>
+    <li>⬅️ / ➡️ : Se déplacer</li>
+    <li>⬆️ : Monter une échelle/sauter</li>
+  </ul>
+</div>
+
+  
 <script>
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
