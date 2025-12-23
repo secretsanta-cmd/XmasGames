@@ -99,7 +99,7 @@
         localStorage.setItem("duckAccess", "true");
 
         // redirection vers la vraie intro ou le jeu
-        window.location.href = "intro.html";
+        window.location.href = "final.html";
       } else {
         document.getElementById("error").style.display = "block";
       }
@@ -107,7 +107,7 @@
 
     // 🔁 accès automatique si déjà validé
     if (localStorage.getItem("duckAccess") === "true") {
-      window.location.href = "intro.html";
+      window.location.href = "final.html";
     }
   </script>
 
