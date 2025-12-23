@@ -22,8 +22,8 @@
 
 <body>
 
-<h1>🦍 L’ascension finale</h1>
-<p>Grimpe jusqu’au boss et évite les tonneaux !</p>
+<h1>🦍 Ascension finale</h1>
+<p>Monte, saute et évite les tonneaux !</p>
 
 <canvas id="game" width="600" height="400"></canvas>
 
@@ -40,7 +40,7 @@ let cameraY = 0;
 // === JOUEUR ===
 const player = {
   x: 50,
-  y: 200,
+  y: 340,
   w: 24,
   h: 32,
   vx: 0,
@@ -51,31 +51,33 @@ const player = {
   onLadder: false
 };
 
-// === BOSS (Donkey Kong) ===
-const boss = {
-  x: 260,
-  y: -800,
-  size: 40
-};
-
-// === PLATEFORMES (monde vertical) ===
+// === PLATEFORMES ===
 const platforms = [];
 for (let i = 0; i < 12; i++) {
   platforms.push({
     x: (i % 2 === 0) ? 0 : 150,
-    y: i * -80,
+    y: 360 - i * 80,
     w: 450,
     h: 15
   });
 }
 
+// === BOSS ===
+const boss = {
+  x: 260,
+  y: platforms[platforms.length - 1].y - 50,
+  size: 40
+};
+
 // === ÉCHELLES ===
-const ladders = [
-  { x: 120, y: -80, h: 80 },
-  { x: 300, y: -240, h: 80 },
-  { x: 120, y: -400, h: 80 },
-  { x: 300, y: -560, h: 80 }
-];
+const ladders = [];
+for (let i = 0; i < 11; i++) {
+  ladders.push({
+    x: (i % 2 === 0) ? 120 : 300,
+    y: platforms[i].y - 80,
+    h: 80
+  });
+}
 
 // === TONNEAUX ===
 let barrels = [];
@@ -91,7 +93,7 @@ const gravity = 0.5;
 
 function spawnBarrel() {
   barrels.push({
-    x: boss.x,
+    x: boss.x + boss.size / 2,
     y: boss.y + boss.size,
     r: 10,
     vx: Math.random() < 0.5 ? -2 : 2,
@@ -101,7 +103,7 @@ function spawnBarrel() {
 
 function update() {
 
-  // === MOUVEMENT JOUEUR ===
+  // === INPUT ===
   player.vx = 0;
   if (keys["ArrowLeft"]) player.vx = -player.speed;
   if (keys["ArrowRight"]) player.vx = player.speed;
@@ -127,15 +129,15 @@ function update() {
 
   player.x = Math.max(0, Math.min(WIDTH - player.w, player.x));
 
-  // === COLLISION PLATEFORMES ===
+  // === COLLISIONS PLATEFORMES ===
   player.onGround = false;
   platforms.forEach(p => {
     if (
-      player.x < p.x + p.w &&
       player.x + player.w > p.x &&
-      player.vy >= 0 &&
-      player.y + player.h <= p.y &&
-      player.y + player.h + player.vy >= p.y
+      player.x < p.x + p.w &&
+      player.y + player.h >= p.y &&
+      player.y + player.h <= p.y + 10 &&
+      player.vy >= 0
     ) {
       player.y = p.y - player.h;
       player.vy = 0;
@@ -157,12 +159,12 @@ function update() {
     }
   });
 
-  // === CAMERA (défilement vers le haut) ===
-  cameraY = player.y - HEIGHT / 2;
+  // === CAMERA (ne monte que vers le haut) ===
+  cameraY = Math.min(cameraY, player.y - HEIGHT / 2);
 
   // === TONNEAUX ===
   barrelTimer++;
-  if (barrelTimer > 100) {
+  if (barrelTimer > 120) {
     spawnBarrel();
     barrelTimer = 0;
   }
@@ -172,7 +174,6 @@ function update() {
     b.x += b.vx;
     b.y += b.vy;
 
-    // murs latéraux
     if (b.x - b.r < 0 || b.x + b.r > WIDTH) {
       b.vx *= -1;
     }
@@ -190,7 +191,7 @@ function update() {
     });
   });
 
-  // === COLLISION JOUEUR / TONNEAU ===
+  // === COLLISION TONNEAU ===
   for (const b of barrels) {
     if (
       b.x > player.x &&
@@ -209,8 +210,8 @@ function update() {
     player.x < boss.x + boss.size &&
     player.y < boss.y + boss.size
   ) {
-    alert("🏆 Victoire ! Le canard triomphe !");
-    location.href = "index.html";
+    alert("🏆 Victoire finale !");
+    location.reload();
   }
 }
 
@@ -225,15 +226,11 @@ function draw() {
 
   // Plateformes
   ctx.fillStyle = "#888";
-  platforms.forEach(p => {
-    ctx.fillRect(p.x, p.y, p.w, p.h);
-  });
+  platforms.forEach(p => ctx.fillRect(p.x, p.y, p.w, p.h));
 
   // Échelles
   ctx.fillStyle = "#4dd0ff";
-  ladders.forEach(l => {
-    ctx.fillRect(l.x, l.y, 30, l.h);
-  });
+  ladders.forEach(l => ctx.fillRect(l.x, l.y, 30, l.h));
 
   // Joueur
   ctx.fillStyle = "yellow";
