@@ -40,7 +40,7 @@ let cameraY = 0;
 // === JOUEUR ===
 const player = {
   x: 50,
-  y: platforms[0].y - 32,
+  y: 300,
   w: 24,
   h: 32,
   vx: 0,
@@ -61,6 +61,9 @@ for (let i = 0; i < 12; i++) {
     h: 15
   });
 }
+player.y = platforms[0].y - player.h;
+player.onGround = true;
+
 
 // === BOSS ===
 const boss = {
