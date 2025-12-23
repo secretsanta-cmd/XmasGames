@@ -1,1 +1,201 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Boss Final 🦆</title>
 
+<style>
+  body {
+    margin: 0;
+    background: black;
+    color: white;
+    text-align: center;
+    font-family: sans-serif;
+  }
+  canvas {
+    background: #111;
+    display: block;
+    margin: auto;
+  }
+</style>
+</head>
+
+<body>
+
+<h1>🦍 Le boss final</h1>
+<p>Évite les tonneaux et atteins le sommet !</p>
+
+<canvas id="game" width="600" height="400"></canvas>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+const WIDTH = canvas.width;
+const HEIGHT = canvas.height;
+
+// === JOUEUR ===
+const player = {
+  x: 50,
+  y: HEIGHT - 40,
+  w: 24,
+  h: 32,
+  vx: 0,
+  vy: 0,
+  speed: 3,
+  jump: -10,
+  onGround: false
+};
+
+// === BOSS ===
+const boss = {
+  x: WIDTH - 80,
+  y: 20,
+  size: 40
+};
+
+// === PLATEFORMES ===
+const platforms = [
+  { x: 0, y: HEIGHT - 20, w: WIDTH, h: 20 },
+  { x: 0, y: 300, w: 450, h: 15 },
+  { x: 150, y: 220, w: 450, h: 15 },
+  { x: 0, y: 140, w: 450, h: 15 }
+];
+
+// === TONNEAUX ===
+let barrels = [];
+let barrelTimer = 0;
+
+// === INPUT ===
+const keys = {};
+window.addEventListener("keydown", e => keys[e.key] = true);
+window.addEventListener("keyup", e => keys[e.key] = false);
+
+// === PHYSIQUE ===
+const gravity = 0.5;
+
+function spawnBarrel() {
+  barrels.push({
+    x: boss.x,
+    y: boss.y + boss.size,
+    r: 10,
+    vx: -2,
+    vy: 0
+  });
+}
+
+function update() {
+  // Mouvement joueur
+  player.vx = 0;
+  if (keys["ArrowLeft"]) player.vx = -player.speed;
+  if (keys["ArrowRight"]) player.vx = player.speed;
+
+  if (keys["ArrowUp"] && player.onGround) {
+    player.vy = player.jump;
+    player.onGround = false;
+  }
+
+  player.vy += gravity;
+  player.x += player.vx;
+  player.y += player.vy;
+
+  // Limites
+  player.x = Math.max(0, Math.min(WIDTH - player.w, player.x));
+
+  // Collision plateformes
+  player.onGround = false;
+  platforms.forEach(p => {
+    if (
+      player.x < p.x + p.w &&
+      player.x + player.w > p.x &&
+      player.y + player.h < p.y + 10 &&
+      player.y + player.h + player.vy >= p.y
+    ) {
+      player.y = p.y - player.h;
+      player.vy = 0;
+      player.onGround = true;
+    }
+  });
+
+  // Barils
+  barrelTimer++;
+  if (barrelTimer > 120) {
+    spawnBarrel();
+    barrelTimer = 0;
+  }
+
+  barrels.forEach(b => {
+    b.vy += gravity;
+    b.x += b.vx;
+    b.y += b.vy;
+
+    platforms.forEach(p => {
+      if (
+        b.x > p.x &&
+        b.x < p.x + p.w &&
+        b.y + b.r >= p.y &&
+        b.y + b.r <= p.y + 10
+      ) {
+        b.y = p.y - b.r;
+        b.vy = 0;
+      }
+    });
+  });
+
+  // Collision joueur / baril
+  for (const b of barrels) {
+    if (
+      b.x > player.x &&
+      b.x < player.x + player.w &&
+      b.y > player.y &&
+      b.y < player.y + player.h
+    ) {
+      alert("💥 Touché ! Recommence !");
+      location.reload();
+    }
+  }
+
+  // Victoire
+  if (player.y < 60) {
+    alert("🎉 Victoire ! Le canard triomphe !");
+    location.href = "index.html";
+  }
+}
+
+function draw() {
+  ctx.clearRect(0, 0, WIDTH, HEIGHT);
+
+  // Boss
+  ctx.fillStyle = "brown";
+  ctx.fillRect(boss.x, boss.y, boss.size, boss.size);
+
+  // Plateformes
+  ctx.fillStyle = "#888";
+  platforms.forEach(p => {
+    ctx.fillRect(p.x, p.y, p.w, p.h);
+  });
+
+  // Joueur
+  ctx.fillStyle = "yellow";
+  ctx.fillRect(player.x, player.y, player.w, player.h);
+
+  // Barils
+  ctx.fillStyle = "orange";
+  barrels.forEach(b => {
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+    ctx.fill();
+  });
+}
+
+function loop() {
+  update();
+  draw();
+  requestAnimationFrame(loop);
+}
+
+loop();
+</script>
+
+</body>
+</html>
