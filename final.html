@@ -95,10 +95,7 @@ player.y = platforms[0].y - player.h;
 player.onGround = true;
 
 // Vérifier si le joueur peut attraper l'échelle
-let canGrabLadder = false;
-if (player.onGround) || (player.onLadder) {
-  canGrabLadder = true;
-}
+let canGrabLadder = player.onGround || player.onLadder;
 
 // === BOSS ===
 const boss = {
