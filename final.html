@@ -3,20 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <title>Boss Final 🦍</title>
+
 <style>
-body {
-  margin: 0;
-  background: black;
-  color: white;
-  text-align: center;
-  font-family: sans-serif;
-}
-canvas {
-  background: #111;
-  display: block;
-  margin: auto;
-}
-#controls {
+  body {
+    margin: 0;
+    background: black;
+    color: white;
+    text-align: center;
+    font-family: sans-serif;
+  }
+  canvas {
+    background: #111;
+    display: block;
+    margin: auto;
+  }
+  #controls {
   position: fixed;
   right: 20px;
   top: 120px;
@@ -29,9 +30,15 @@ canvas {
   font-size: 14px;
   color: white;
 }
-#controls h3 { margin-top: 0; text-align: center; }
+
+#controls h3 {
+  margin-top: 0;
+  text-align: center;
+}
+
 </style>
 </head>
+
 <body>
 
 <h1>🦍 Ascension finale</h1>
@@ -39,17 +46,19 @@ canvas {
 
 <canvas id="game" width="600" height="400"></canvas>
 
-<div id="controls">
-<h3>🎮 Contrôles</h3>
-<ul>
-<li>⬅️ / ➡️ : Se déplacer</li>
-<li>⬆️ : Monter une échelle/sauter</li>
-</ul>
+  <div id="controls">
+  <h3>🎮 Contrôles</h3>
+  <ul>
+    <li>⬅️ / ➡️ : Se déplacer</li>
+    <li>⬆️ : Monter une échelle/sauter</li>
+  </ul>
 </div>
 
+  
 <script>
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
+
 const WIDTH = canvas.width;
 const HEIGHT = canvas.height;
 
@@ -57,13 +66,18 @@ const HEIGHT = canvas.height;
 let cameraY = 0;
 
 // === SPRITES ===
-const playerImg = new Image(); playerImg.src = "canard.png";
-const bossImg = new Image(); bossImg.src = "chasseur.png";
-const ladderImg = new Image(); ladderImg.src = "echelle.png";
+const playerImg = new Image();
+playerImg.src = "canard.png"; // placer le fichier player.png dans le repo
+
+const bossImg = new Image();
+bossImg.src = "chasseur.png"; // placer boss.png
+
+const ladderImg = new Image();
+ladderImg.src = "echelle.png"; // placer ladder.png
 
 // === TIMER DE DÉBUT ===
 let gameStarted = false;
-let countdown = 3;
+let countdown = 3; // secondes
 const countdownInterval = setInterval(() => {
   countdown--;
   if (countdown <= 0) {
@@ -74,34 +88,63 @@ const countdownInterval = setInterval(() => {
 
 // === JOUEUR ===
 const player = {
-  x: 50, y: 300, w: 24, h: 27,
-  vx: 0, vy: 0, speed: 3, jump: -5,
-  onGround: false, onLadder: false,
-  jumpTime: 0, isJumping: false,
-  canGrabLadder: false
+  x: 50,
+  y: 300,
+  w: 24,
+  h: 27,
+  vx: 0,
+  vy: 0,
+  speed: 3,
+  jump: -5,
+  onGround: false,
+  onLadder: false,
+  jumpTime: 0,
+  isJumping: false
 };
 
 // === PLATEFORMES ===
 const platforms = [];
-for(let i=0;i<12;i++){
-  platforms.push({x:(i%2===0)?0:150, y:360 - i*80, w:450, h:15});
+for (let i = 0; i < 12; i++) {
+  platforms.push({
+    x: (i % 2 === 0) ? 0 : 150,
+    y: 360 - i * 80,
+    w: 450,
+    h: 15
+  });
 }
 player.y = platforms[0].y - player.h;
 player.onGround = true;
 
+// Vérifier si le joueur peut attraper l'échelle
+let canGrabLadder = !player.isJumping && player.onLadder;
+
 // === BOSS ===
-const boss = {x:260, y:platforms[platforms.length-1].y-50, size:40};
+const boss = {
+  x: 260,
+  y: platforms[platforms.length - 1].y - 50,
+  size: 40
+};
+
 let bossActive = false;
 
 // === ÉCHELLES ===
 const ladders = [];
-for(let i=0;i<11;i++){
-  ladders.push({x:(i%2===0)?120:300, y:platforms[i].y-80, h:80});
+for (let i = 0; i < 11; i++) {
+  ladders.push({
+    x: (i % 2 === 0) ? 120 : 300,
+    y: platforms[i].y - 80,
+    h: 80
+  });
 }
-// Supprimer 3 échelles équilibrées (sauf première et dernière)
-const totalLadders = ladders.length;
-[ Math.floor(totalLadders/4), Math.floor(totalLadders/2), Math.floor(3*totalLadders/4) ]
-.sort((a,b)=>b-a).forEach(i => ladders.splice(i,1));
+
+function removeLadders() {
+  const totalLadders = ladders.length;
+  // On garde la première et la dernière
+  const indicesToRemove = [Math.floor(totalLadders / 4), Math.floor(totalLadders / 2), Math.floor(3 * totalLadders / 4)];
+  // Supprimer en partant de la fin pour ne pas décaler les indices
+  indicesToRemove.sort((a,b) => b - a).forEach(i => ladders.splice(i, 1));
+}
+removeLadders();
 
 // === TONNEAUX ===
 let barrels = [];
@@ -109,150 +152,270 @@ let barrelTimer = 0;
 
 // === INPUT ===
 const keys = {};
-window.addEventListener("keydown", e => keys[e.key]=true);
-window.addEventListener("keyup", e=>{
-  keys[e.key]=false;
-  if(e.key==="ArrowUp" && player.vy<0) player.isJumping=false;
-});
+window.addEventListener("keydown", e => keys[e.key] = true);
+window.addEventListener("keyup", e => {
+  keys[e.key] = false;
 
+  if (e.key === "ArrowUp" && player.vy < 0) {
+    player.isJumping = false;
+  }
+});
 // === PHYSIQUE ===
 const gravity = 0.5;
-const jumpHoldGravity = 0.12;
-const maxJumpHoldTime = 25;
+const jumpHoldGravity = 0.12; // gravité réduite pendant l'appui
+const maxJumpHoldTime = 25;   // durée max du saut prolongé  
 
-function isOnScreen(y,height=0){
-  return y+height+cameraY >=0 && y+cameraY <= HEIGHT;
+// coordonnées écran : y + cameraY
+function isOnScreen(y, height = 0) {
+  return (
+    y + height + cameraY >= 0 &&
+    y + cameraY <= HEIGHT
+  );
 }
-
-// Spawn tonneau
-function spawnBarrel(){
-  if(!bossActive){
-    barrels.push({x:Math.random()*(WIDTH-40)+20, y:cameraY-20, r:8, vx:Math.random()<0.5?-2:2, vy:0});
+    
+  
+function spawnBarrel() {
+  if (!bossActive) {
+    // AVANT le boss → tonneaux depuis le haut de l’écran
+    barrels.push({
+      x: Math.random() * (WIDTH - 40) + 20,
+      y: cameraY - 20, // juste au-dessus de l’écran visible
+      r: 8,
+      vx: Math.random() < 0.5 ? -2 : 2,
+      vy: 0
+    });
   } else {
-    barrels.push({x:boss.x+boss.size/2, y:boss.y+boss.size, r:10, vx:Math.random()<0.5?-2:2, vy:0});
+    // APRÈS apparition du boss → tonneaux lancés par lui
+    barrels.push({
+      x: boss.x + boss.size / 2,
+      y: boss.y + boss.size,
+      r: 10,
+      vx: Math.random() < 0.5 ? -2 : 2,
+      vy: 0
+    });
   }
 }
 
-// === UPDATE ===
-function update(){
-  player.vx=0;
-  if(gameStarted){
-    if(keys["ArrowLeft"]) player.vx=-player.speed;
-    if(keys["ArrowRight"]) player.vx=player.speed;
+
+
+
+function update() {
+
+// === INPUT ===
+player.vx = 0;
+  if (gameStarted){
+if (keys["ArrowLeft"]) player.vx = -player.speed;
+if (keys["ArrowRight"]) player.vx = player.speed;
   }
 
-  // Gravité et saut prolongé
-  if(!player.onGround && !player.onLadder){
-    if(player.isJumping && keys["ArrowUp"] && player.jumpTime<maxJumpHoldTime){
-      player.vy+=jumpHoldGravity;
-      player.jumpTime++;
-    } else player.vy+=gravity;
+player.canGrabLadder = !player.isJumping && player.onLadder
+// Monter / descendre échelle
+if (keys["ArrowUp"]) {
+  // autoriser échelle uniquement si le joueur touche le sol ou une plateforme
+  if (player.canGrabLadder) {
+    player.vy = -player.speed; // monter échelle
+  } 
+  else if (player.onGround && !player.isJumping) {
+    // Saut initial
+    player.vy = player.jump;
+    player.isJumping = true;
+    player.jumpTime = 0;
   }
+}
 
-  player.x+=player.vx;
-  player.y+=player.vy;
-  player.x=Math.max(0, Math.min(WIDTH-player.w, player.x));
+if (keys["ArrowDown"] && player.onLadder && !player.onGround) {
+  player.vy = player.speed; // descendre échelle
+}
+
+// Gravité et saut prolongé
+if (!player.onGround && !player.onLadder) {
+  if (player.isJumping && keys["ArrowUp"] && player.jumpTime < maxJumpHoldTime) {
+    player.vy += jumpHoldGravity; // saut prolongé
+    player.jumpTime++;
+  } else {
+    player.vy += gravity; // gravité normale
+  }
+}
+
+
+  player.x += player.vx;
+  player.y += player.vy;
+
+  player.x = Math.max(0, Math.min(WIDTH - player.w, player.x));
 
   // === COLLISIONS PLATEFORMES ===
-  player.onGround=false;
-  platforms.forEach(p=>{
-    if(player.vy>=0 && player.x+player.w>p.x && player.x<p.x+p.w && player.y+player.h<=p.y && player.y+player.h+player.vy>=p.y){
-      player.y=p.y-player.h; player.vy=0; player.onGround=true;
-      player.isJumping=false; player.jumpTime=0;
-    }
-    if(player.vy<0 && player.x+player.w>p.x && player.x<p.x+p.w && player.y>=p.y+p.h && player.y+player.vy<=p.y+p.h){
-      player.y=p.y+p.h; player.vy=0;
-    }
-  });
+  player.onGround = false;
+platforms.forEach(p => {
 
-  // === ÉCHELLES ===
-  player.onLadder=false;
-  ladders.forEach(l=>{
-    if(player.x+player.w>l.x && player.x<l.x+30 && player.y+player.h>l.y && player.y<l.y+l.h){
-      player.onLadder=true;
-    }
-  });
+  // === Collision par le dessus (atterrissage) ===
+  if (
+    player.vy >= 0 &&
+    player.x + player.w > p.x &&
+    player.x < p.x + p.w &&
+    player.y + player.h <= p.y &&
+    player.y + player.h + player.vy >= p.y
+  ) {
+    player.y = p.y - player.h;
+    player.vy = 0;
+    player.onGround = true;
+    player.isJumping = false;
+  player.jumpTime = 0;
+}
 
-  // Peut attraper échelle uniquement si au sol ou sur plateforme
-  player.canGrabLadder = player.onLadder && player.onGround;
-  if(keys["ArrowUp"] && player.canGrabLadder) player.vy=-player.speed;
-  if(keys["ArrowDown"] && player.canGrabLadder) player.vy=player.speed;
-
-  // Saut initial
-  if(keys["ArrowUp"] && player.onGround && !player.isJumping && !player.canGrabLadder){
-    player.vy=player.jump;
-    player.isJumping=true; player.jumpTime=0;
+  // === Collision par le dessous (tête) ===
+  if (
+    player.vy < 0 &&
+    player.x + player.w > p.x &&
+    player.x < p.x + p.w &&
+    player.y >= p.y + p.h &&
+    player.y + player.vy <= p.y + p.h
+  ) {
+    player.y = p.y + p.h;
+    player.vy = 0;
   }
 
-  // CAMERA
-  cameraY = Math.min(cameraY, player.y - HEIGHT/2);
+});
 
-  // Boss activation
-  if(!bossActive && isOnScreen(boss.y,boss.size)) bossActive=true;
 
-  // Spawn tonneaux
-  barrelTimer++;
-  if(barrelTimer>70){ spawnBarrel(); barrelTimer=0; }
 
-  // Tonneaux
-  barrels.forEach(b=>{
-    b.vy+=gravity; b.x+=b.vx; b.y+=b.vy;
-    if(b.x-b.r<0 || b.x+b.r>WIDTH) b.vx*=-1;
-    platforms.forEach(p=>{
-      if(b.x>p.x && b.x<p.x+p.w && b.y+b.r>=p.y && b.y+b.r<=p.y+10){ b.y=p.y-b.r; b.vy=0; }
+
+  // === ÉCHELLES ===
+  player.onLadder = false;
+  ladders.forEach(l => {
+    if (
+      player.x + player.w > l.x &&
+      player.x < l.x + 30 &&
+      player.y + player.h > l.y &&
+      player.y < l.y + l.h &&
+      !player.isJumping
+    ) {
+      player.onLadder = true;
+      player.vy = 0;
+    }
+  });
+
+  // === CAMERA (ne monte que vers le haut) ===
+  cameraY = Math.min(cameraY, player.y - HEIGHT / 2);
+  
+if (!bossActive && isOnScreen(boss.y, boss.size)) {
+  bossActive = true;
+}
+
+barrelTimer++;
+if (barrelTimer > 70) {
+  spawnBarrel();
+  barrelTimer = 0;
+}
+
+
+
+  // === TONNEAUX ===
+
+  barrels.forEach(b => {
+    b.vy += gravity;
+    b.x += b.vx;
+    b.y += b.vy;
+
+    if (b.x - b.r < 0 || b.x + b.r > WIDTH) {
+      b.vx *= -1;
+    }
+
+    platforms.forEach(p => {
+      if (
+        b.x > p.x &&
+        b.x < p.x + p.w &&
+        b.y + b.r >= p.y &&
+        b.y + b.r <= p.y + 10
+      ) {
+        b.y = p.y - b.r;
+        b.vy = 0;
+      }
     });
   });
 
-  // Collision tonneau
-  for(const b of barrels){
-    if(b.x>player.x && b.x<player.x+player.w && b.y>player.y && b.y<player.y+player.h){
-      alert("💥 Touché !"); location.reload();
+  // === COLLISION TONNEAU ===
+  for (const b of barrels) {
+    if (
+      b.x > player.x &&
+      b.x < player.x + player.w &&
+      b.y > player.y &&
+      b.y < player.y + player.h
+    ) {
+      alert("💥 Touché !");
+      location.reload();
     }
   }
 
-  // Victoire
-  if(player.x+player.w>boss.x && player.x<boss.x+boss.size && player.y<boss.y+boss.size){
-    alert("🏆 Victoire finale !"); location.reload();
+  // === VICTOIRE ===
+  if (
+    player.x + player.w > boss.x &&
+    player.x < boss.x + boss.size &&
+    player.y < boss.y + boss.size
+  ) {
+    alert("🏆 Victoire finale !");
+    location.reload();
   }
 }
 
-// === DRAW ===
-function draw(){
-  ctx.clearRect(0,0,WIDTH,HEIGHT);
-  ctx.save(); ctx.translate(0,-cameraY);
+function draw() {
+  ctx.clearRect(0, 0, WIDTH, HEIGHT);
+  ctx.save();
+  ctx.translate(0, -cameraY);
 
   // Boss
-  if(bossImg.complete) ctx.drawImage(bossImg,boss.x,boss.y,boss.size,boss.size);
-  else {ctx.fillStyle="brown"; ctx.fillRect(boss.x,boss.y,boss.size,boss.size);}
+  if (bossImg.complete) {
+    ctx.drawImage(bossImg, boss.x, boss.y, boss.size, boss.size);
+  } else {
+    ctx.fillStyle = "brown";
+    ctx.fillRect(boss.x, boss.y, boss.size, boss.size);
+  }
 
   // Plateformes
-  ctx.fillStyle="#888"; platforms.forEach(p=>ctx.fillRect(p.x,p.y,p.w,p.h));
+  ctx.fillStyle = "#888";
+  platforms.forEach(p => ctx.fillRect(p.x, p.y, p.w, p.h));
 
   // Échelles
-  ladders.forEach(l=>{
-    if(ladderImg.complete) ctx.drawImage(ladderImg,l.x,l.y,30,l.h);
-    else {ctx.fillStyle="#4dd0ff"; ctx.fillRect(l.x,l.y,30,l.h);}
+  ladders.forEach(l => {
+    if (ladderImg.complete) {
+      ctx.drawImage(ladderImg, l.x, l.y, 30, l.h);
+    } else {
+      ctx.fillStyle = "#4dd0ff";
+      ctx.fillRect(l.x, l.y, 30, l.h);
+    }
   });
 
   // Joueur
-  if(playerImg.complete) ctx.drawImage(playerImg,player.x,player.y,player.w,player.h);
-  else {ctx.fillStyle="yellow"; ctx.fillRect(player.x,player.y,player.w,player.h);}
-
-  // Tonneaux
-  ctx.fillStyle="orange";
-  barrels.forEach(b=>{ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);ctx.fill();});
-
-  // Décompte
-  if(!gameStarted){
-    ctx.fillStyle="white"; ctx.font="48px sans-serif";
-    ctx.fillText(countdown, WIDTH/2-12, HEIGHT/2);
+  if (playerImg.complete) {
+    ctx.drawImage(playerImg, player.x, player.y, player.w, player.h);
+  } else {
+    ctx.fillStyle = "yellow";
+    ctx.fillRect(player.x, player.y, player.w, player.h);
   }
 
+  // Tonneaux
+  ctx.fillStyle = "orange";
+  barrels.forEach(b => {
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  
+ if (!gameStarted) {
+    ctx.fillStyle = "white";
+    ctx.font = "48px sans-serif";
+    ctx.fillText(countdown, WIDTH/2 - 12, HEIGHT/2);
+  }
   ctx.restore();
 }
 
-function loop(){ update(); draw(); requestAnimationFrame(loop); }
+function loop() {
+  update();
+  draw();
+  requestAnimationFrame(loop);
+}
+
 loop();
 </script>
+
 </body>
 </html>
