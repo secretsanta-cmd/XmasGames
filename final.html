@@ -144,17 +144,18 @@ function spawnBarrel() {
   });
 }
 function preSpawnBarrels() {
-  const count = 5; // nombre de tonneaux au départ
+  const count = 5;
   for (let i = 0; i < count; i++) {
     barrels.push({
-      x: boss.x + boss.w / 2,
-      y: boss.y + boss.h + i * 40,
-      vx: i % 2 === 0 ? -2 : 2,
-      vy: 0,
-      r: 8
+      x: Math.random() * (WIDTH - 40) + 20,
+      y: HEIGHT - 50 - i * 60, // zone visible
+      r: 8,
+      vx: Math.random() < 0.5 ? -2 : 2,
+      vy: 0
     });
   }
 }
+
 
 
 function update() {
@@ -232,11 +233,6 @@ if (bossActive) {
 
 
   // === TONNEAUX ===
-  barrelTimer++;
-  if (barrelTimer > 120) {
-    spawnBarrel();
-    barrelTimer = 0;
-  }
 
   barrels.forEach(b => {
     b.vy += gravity;
