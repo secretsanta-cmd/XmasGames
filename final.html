@@ -115,7 +115,6 @@ for (let i = 0; i < 11; i++) {
 // === TONNEAUX ===
 let barrels = [];
 let barrelTimer = 0;
-preSpawnBarrels();
 
 // === INPUT ===
 const keys = {};
@@ -135,26 +134,27 @@ function isOnScreen(y, height = 0) {
     
   
 function spawnBarrel() {
-  barrels.push({
-    x: boss.x + boss.size / 2,
-    y: boss.y + boss.size,
-    r: 10,
-    vx: Math.random() < 0.5 ? -2 : 2,
-    vy: 0
-  });
-}
-function preSpawnBarrels() {
-  const count = 5;
-  for (let i = 0; i < count; i++) {
+  if (!bossActive) {
+    // AVANT le boss → tonneaux depuis le haut de l’écran
     barrels.push({
       x: Math.random() * (WIDTH - 40) + 20,
-      y: HEIGHT - 50 - i * 60, // zone visible
+      y: cameraY - 20, // juste au-dessus de l’écran visible
       r: 8,
+      vx: Math.random() < 0.5 ? -2 : 2,
+      vy: 0
+    });
+  } else {
+    // APRÈS apparition du boss → tonneaux lancés par lui
+    barrels.push({
+      x: boss.x + boss.size / 2,
+      y: boss.y + boss.size,
+      r: 10,
       vx: Math.random() < 0.5 ? -2 : 2,
       vy: 0
     });
   }
 }
+
 
 
 
@@ -220,16 +220,16 @@ function update() {
   // === CAMERA (ne monte que vers le haut) ===
   cameraY = Math.min(cameraY, player.y - HEIGHT / 2);
   
-  if (!bossActive && isOnScreen(boss.y, boss.h)) {
+if (!bossActive && isOnScreen(boss.y, boss.size)) {
   bossActive = true;
 }
-if (bossActive) {
-  barrelTimer++;
-  if (barrelTimer > 90) {
-    spawnBarrel();
-    barrelTimer = 0;
-  }
+
+barrelTimer++;
+if (barrelTimer > 90) {
+  spawnBarrel();
+  barrelTimer = 0;
 }
+
 
 
   // === TONNEAUX ===
