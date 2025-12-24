@@ -65,6 +65,22 @@ const HEIGHT = canvas.height;
 // === CAMERA ===
 let cameraY = 0;
 
+// === SPRITES ===
+const playerImg = new Image();
+playerImg.src = "canard.png"; // placer le fichier player.png dans le repo
+
+const bossImg = new Image();
+bossImg.src = "chasseur.png"; // placer boss.png
+
+const ladderImg = new Image();
+ladderImg.src = "echelle.png"; // placer ladder.png
+
+// === TIMER DE DÉBUT ===
+let gameStarted = false;
+setTimeout(() => {
+  gameStarted = true; // après 3 secondes, le joueur peut bouger
+}, 3000);
+
 // === JOUEUR ===
 const player = {
   x: 50,
@@ -173,8 +189,10 @@ function update() {
 
 // === INPUT ===
 player.vx = 0;
+  if (gameStarted){
 if (keys["ArrowLeft"]) player.vx = -player.speed;
 if (keys["ArrowRight"]) player.vx = player.speed;
+  }
 
 player.canGrabLadder = !player.isJumping && player.onLadder
 // Monter / descendre échelle
@@ -331,20 +349,34 @@ function draw() {
   ctx.translate(0, -cameraY);
 
   // Boss
-  ctx.fillStyle = "brown";
-  ctx.fillRect(boss.x, boss.y, boss.size, boss.size);
+  if (bossImg.complete) {
+    ctx.drawImage(bossImg, boss.x, boss.y, boss.size, boss.size);
+  } else {
+    ctx.fillStyle = "brown";
+    ctx.fillRect(boss.x, boss.y, boss.size, boss.size);
+  }
 
   // Plateformes
   ctx.fillStyle = "#888";
   platforms.forEach(p => ctx.fillRect(p.x, p.y, p.w, p.h));
 
   // Échelles
-  ctx.fillStyle = "#4dd0ff";
-  ladders.forEach(l => ctx.fillRect(l.x, l.y, 30, l.h));
+  ladders.forEach(l => {
+    if (ladderImg.complete) {
+      ctx.drawImage(ladderImg, l.x, l.y, 30, l.h);
+    } else {
+      ctx.fillStyle = "#4dd0ff";
+      ctx.fillRect(l.x, l.y, 30, l.h);
+    }
+  });
 
   // Joueur
-  ctx.fillStyle = "yellow";
-  ctx.fillRect(player.x, player.y, player.w, player.h);
+  if (playerImg.complete) {
+    ctx.drawImage(playerImg, player.x, player.y, player.w, player.h);
+  } else {
+    ctx.fillStyle = "yellow";
+    ctx.fillRect(player.x, player.y, player.w, player.h);
+  }
 
   // Tonneaux
   ctx.fillStyle = "orange";
