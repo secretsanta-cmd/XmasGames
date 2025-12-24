@@ -136,8 +136,8 @@ function preSpawnBarrels() {
   const count = 5; // nombre de tonneaux au départ
   for (let i = 0; i < count; i++) {
     barrels.push({
-      x: donkey.x + donkey.w / 2,
-      y: donkey.y + donkey.h + i * 40,
+      x: boss.x + boss.w / 2,
+      y: boss.y + boss.h + i * 40,
       vx: i % 2 === 0 ? -2 : 2,
       vy: 0,
       r: 8
@@ -208,7 +208,7 @@ function update() {
   // === CAMERA (ne monte que vers le haut) ===
   cameraY = Math.min(cameraY, player.y - HEIGHT / 2);
   
-  if (!bossActive && isOnScreen(donkey.y, donkey.h)) {
+  if (!bossActive && isOnScreen(boss.y, boss.h)) {
   bossActive = true;
 }
 if (bossActive) {
