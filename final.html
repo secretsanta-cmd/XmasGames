@@ -76,7 +76,9 @@ const player = {
   speed: 3,
   jump: -12,
   onGround: false,
-  onLadder: false
+  onLadder: false,
+  jumpTime: 0,
+  isJumping: false
 };
 
 // === PLATEFORMES ===
@@ -119,10 +121,17 @@ let barrelTimer = 0;
 // === INPUT ===
 const keys = {};
 window.addEventListener("keydown", e => keys[e.key] = true);
-window.addEventListener("keyup", e => keys[e.key] = false);
+window.addEventListener("keyup", e => {
+  keys[e.key] = false;
 
+  if (e.key === "ArrowUp" && player.vy < 0) {
+    player.isJumping = false;
+  }
+});
 // === PHYSIQUE ===
 const gravity = 0.5;
+const jumpHoldGravity = 0.25; // gravité réduite pendant l'appui
+const maxJumpHoldTime = 15;   // durée max du saut prolongé  
 
 // coordonnées écran : y + cameraY
 function isOnScreen(y, height = 0) {
@@ -166,20 +175,30 @@ function update() {
   if (keys["ArrowRight"]) player.vx = player.speed;
 
   if (keys["ArrowUp"]) {
-    if (player.onLadder) {
-      player.vy = -player.speed;
-    } else if (player.onGround) {
-      player.vy = player.jump;
-    }
+  if (player.onLadder) {
+    player.vy = -player.speed;
+  } 
+  else if (player.onGround && !player.isJumping) {
+    player.vy = player.jump;
+    player.isJumping = true;
+    player.jumpTime = 0;
   }
+}
+
 
   if (keys["ArrowDown"] && player.onLadder) {
     player.vy = player.speed;
   }
 
   if (!player.onGround && !player.onLadder) {
-  player.vy += gravity;
+  if (player.isJumping && keys["ArrowUp"] && player.jumpTime < maxJumpHoldTime) {
+    player.vy += jumpHoldGravity;
+    player.jumpTime++;
+  } else {
+    player.vy += gravity;
+  }
 }
+
 
   player.x += player.vx;
   player.y += player.vy;
@@ -201,7 +220,9 @@ platforms.forEach(p => {
     player.y = p.y - player.h;
     player.vy = 0;
     player.onGround = true;
-  }
+    player.isJumping = false;
+  player.jumpTime = 0;
+}
 
   // === Collision par le dessous (tête) ===
   if (
