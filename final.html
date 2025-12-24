@@ -169,33 +169,36 @@ function spawnBarrel() {
 
 function update() {
 
-  // === INPUT ===
-  player.vx = 0;
-  if (keys["ArrowLeft"]) player.vx = -player.speed;
-  if (keys["ArrowRight"]) player.vx = player.speed;
+// === INPUT ===
+player.vx = 0;
+if (keys["ArrowLeft"]) player.vx = -player.speed;
+if (keys["ArrowRight"]) player.vx = player.speed;
 
-  if (keys["ArrowUp"]) {
-  if (player.onLadder) {
-    player.vy = -player.speed;
+// Monter / descendre échelle
+if (keys["ArrowUp"]) {
+  // autoriser échelle uniquement si le joueur touche le sol ou une plateforme
+  if (player.onLadder && player.onGround) {
+    player.vy = -player.speed; // monter échelle
   } 
   else if (player.onGround && !player.isJumping) {
+    // Saut initial
     player.vy = player.jump;
     player.isJumping = true;
     player.jumpTime = 0;
   }
 }
 
+if (keys["ArrowDown"] && player.onLadder && player.onGround) {
+  player.vy = player.speed; // descendre échelle
+}
 
-  if (keys["ArrowDown"] && player.onLadder) {
-    player.vy = player.speed;
-  }
-
-  if (!player.onGround && !player.onLadder) {
+// Gravité et saut prolongé
+if (!player.onGround && !player.onLadder) {
   if (player.isJumping && keys["ArrowUp"] && player.jumpTime < maxJumpHoldTime) {
-    player.vy += jumpHoldGravity;
+    player.vy += jumpHoldGravity; // saut prolongé
     player.jumpTime++;
   } else {
-    player.vy += gravity;
+    player.vy += gravity; // gravité normale
   }
 }
 
