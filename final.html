@@ -188,7 +188,9 @@ function update() {
 
   // === COLLISIONS PLATEFORMES ===
   player.onGround = false;
-  platforms.forEach(p => {
+platforms.forEach(p => {
+
+  // === Collision par le dessus (atterrissage) ===
   if (
     player.vy >= 0 &&
     player.x + player.w > p.x &&
@@ -200,7 +202,21 @@ function update() {
     player.vy = 0;
     player.onGround = true;
   }
+
+  // === Collision par le dessous (tête) ===
+  if (
+    player.vy < 0 &&
+    player.x + player.w > p.x &&
+    player.x < p.x + p.w &&
+    player.y >= p.y + p.h &&
+    player.y + player.vy <= p.y + p.h
+  ) {
+    player.y = p.y + p.h;
+    player.vy = 0;
+  }
+
 });
+
 
 
 
