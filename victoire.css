@@ -1,0 +1,50 @@
+body {
+  margin: 0;
+  background: #0b0b0b;
+  color: white;
+  font-family: sans-serif;
+}
+
+.victory-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  padding: 40px 20px;
+}
+
+/* Ligne des images */
+.victory-images {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.character {
+  width: 120px;
+  height: auto;
+}
+
+.heart {
+  width: 60px;
+  height: auto;
+}
+
+/* Texte */
+.victory-text {
+  max-width: 600px;
+  text-align: center;
+}
+
+.victory-text h1 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+}
+
+.victory-text p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
