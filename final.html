@@ -96,7 +96,7 @@ player.onGround = true;
 
 // Vérifier si le joueur peut attraper l'échelle
 let canGrabLadder = false;
-if (player.onGround) {
+if (player.onGround) || (player.onLadder) {
   canGrabLadder = true;
 }
 
