@@ -254,7 +254,8 @@ platforms.forEach(p => {
       player.x + player.w > l.x &&
       player.x < l.x + 30 &&
       player.y + player.h > l.y &&
-      player.y < l.y + l.h
+      player.y < l.y + l.h &&
+      !player.isJumping
     ) {
       player.onLadder = true;
       player.vy = 0;
