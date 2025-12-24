@@ -74,7 +74,7 @@ const player = {
   vx: 0,
   vy: 0,
   speed: 3,
-  jump: -5,
+  jump: -8,
   onGround: false,
   onLadder: false,
   jumpTime: 0,
@@ -130,8 +130,8 @@ window.addEventListener("keyup", e => {
 });
 // === PHYSIQUE ===
 const gravity = 0.5;
-const jumpHoldGravity = 0.25; // gravité réduite pendant l'appui
-const maxJumpHoldTime = 20;   // durée max du saut prolongé  
+const jumpHoldGravity = 0.18; // gravité réduite pendant l'appui
+const maxJumpHoldTime = 25;   // durée max du saut prolongé  
 
 // coordonnées écran : y + cameraY
 function isOnScreen(y, height = 0) {
