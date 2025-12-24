@@ -204,8 +204,8 @@ window.addEventListener("keyup", e => {
             score++;
             scoreEl.textContent = score;
 
-            if (score === 1) speedMultiplier = 2;
-            if (score === 2) {
+            if (score === 10) speedMultiplier = 2;
+            if (score === 20) {
               gameOver = true;
               canRestart = true;
               victoryScreen.style.display = "flex";
