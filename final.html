@@ -77,9 +77,14 @@ ladderImg.src = "echelle.png"; // placer ladder.png
 
 // === TIMER DE DÉBUT ===
 let gameStarted = false;
-setTimeout(() => {
-  gameStarted = true; // après 3 secondes, le joueur peut bouger
-}, 3000);
+let countdown = 3; // secondes
+const countdownInterval = setInterval(() => {
+  countdown--;
+  if (countdown <= 0) {
+    gameStarted = true;
+    clearInterval(countdownInterval);
+  }
+}, 1000);
 
 // === JOUEUR ===
 const player = {
@@ -131,6 +136,15 @@ for (let i = 0; i < 11; i++) {
     h: 80
   });
 }
+
+function removeLadders() {
+  const totalLadders = ladders.length;
+  // On garde la première et la dernière
+  const indicesToRemove = [Math.floor(totalLadders / 4), Math.floor(totalLadders / 2), Math.floor(3 * totalLadders / 4)];
+  // Supprimer en partant de la fin pour ne pas décaler les indices
+  indicesToRemove.sort((a,b) => b - a).forEach(i => ladders.splice(i, 1));
+}
+removeLadders();
 
 // === TONNEAUX ===
 let barrels = [];
@@ -385,7 +399,12 @@ function draw() {
     ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
     ctx.fill();
   });
-
+  
+ if (!gameStarted) {
+    ctx.fillStyle = "white";
+    ctx.font = "48px sans-serif";
+    ctx.fillText(countdown, WIDTH/2 - 12, HEIGHT/2);
+  }
   ctx.restore();
 }
 
