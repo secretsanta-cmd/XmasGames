@@ -20,33 +20,19 @@ body {
 /* Ligne des images */
 .victory-images {
   display: flex;
+  justify-content: center;
   align-items: center;
   gap: 30px;
+  margin: 40px 0;
 }
 
-.character {
+.victory-img {
   width: 120px;
   height: auto;
+  object-fit: contain;
 }
 
 .heart {
-  width: 60px;
-  height: auto;
+  width: 80px; /* le cœur peut être un peu plus petit */
 }
 
-/* Texte */
-.victory-text {
-  max-width: 600px;
-  text-align: center;
-}
-
-.victory-text h1 {
-  font-size: 2.5rem;
-  margin-bottom: 20px;
-}
-
-.victory-text p {
-  font-size: 1.1rem;
-  line-height: 1.6;
-  margin-bottom: 15px;
-}
