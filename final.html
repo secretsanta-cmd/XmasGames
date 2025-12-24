@@ -95,7 +95,7 @@ player.y = platforms[0].y - player.h;
 player.onGround = true;
 
 // Vérifier si le joueur peut attraper l'échelle
-let canGrabLadder = player.onGround || player.onLadder;
+let canGrabLadder = !player.isJumping && player.onLadder;
 
 // === BOSS ===
 const boss = {
@@ -176,10 +176,11 @@ player.vx = 0;
 if (keys["ArrowLeft"]) player.vx = -player.speed;
 if (keys["ArrowRight"]) player.vx = player.speed;
 
+player.canGrabLadder = !player.isJumping && player.onLadder
 // Monter / descendre échelle
 if (keys["ArrowUp"]) {
   // autoriser échelle uniquement si le joueur touche le sol ou une plateforme
-  if (player.onLadder && player.canGrabLadder) {
+  if (player.canGrabLadder) {
     player.vy = -player.speed; // monter échelle
   } 
   else if (player.onGround && !player.isJumping) {
